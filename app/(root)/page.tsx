@@ -2,13 +2,10 @@ import HeaderBox from "@/components/HeaderBox";
 import TotalBalanceBox from "@/components/TotalBalanceBox";
 import Image from "next/image";
 import RightSidebar from "../../components/RightSidebar";
+import { getLoggedInUser } from "@/lib/actions/user.actions";
 
-export default function Home() {
-  const loggedIn = {
-    firstName: "adrian",
-    lastName: "jsm",
-    email: "ahmedcharfeddine75@gmail.com",
-  };
+export default async function Home() {
+  const loggedIn = await getLoggedInUser();
 
   return (
     <section className="home">
@@ -17,7 +14,7 @@ export default function Home() {
           <HeaderBox
             type="greeting"
             title="welcome"
-            user="Guest"
+            user={loggedIn}
             subtext="Access and manage your account and transactions efficiently."
           />
           <TotalBalanceBox

@@ -7,13 +7,22 @@ import React, { useState } from "react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-
 import { Button } from "@/components/ui/button";
-import { Form } from "@/components/ui/form";
-import { authFormSchema } from "@/lib/utils";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import CustomInput from "./CustomInput";
+import { authFormSchema } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { getLoggedInUser, signIn, signUp } from "@/lib/actions/user.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
   const router = useRouter();
@@ -22,17 +31,22 @@ const AuthForm = ({ type }: { type: string }) => {
 
   const formSchema = authFormSchema(type);
 
+  // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
+      password: "",
     },
   });
 
+  // 2. Define a submit handler.
   const onSubmit = async (data: z.infer<typeof formSchema>) => {
     setIsLoading(true);
+
     try {
       // Sign up with Appwrite & create plaid token
+
       if (type === "sign-up") {
         const userData = {
           firstName: data.firstName!,
@@ -46,14 +60,18 @@ const AuthForm = ({ type }: { type: string }) => {
           email: data.email,
           password: data.password,
         };
+
         const newUser = await signUp(userData);
+
         setUser(newUser);
       }
+
       if (type === "sign-in") {
         const response = await signIn({
           email: data.email,
           password: data.password,
         });
+
         if (response) router.push("/");
       }
     } catch (error) {
@@ -77,19 +95,22 @@ const AuthForm = ({ type }: { type: string }) => {
             Horizon
           </h1>
         </Link>
-        <div className="FLEX flex-col gap-1 md:gap-3">
+
+        <div className="flex flex-col gap-1 md:gap-3">
           <h1 className="text-24 lg:text-36 font-semibold text-gray-900">
             {user ? "Link Account" : type === "sign-in" ? "Sign In" : "Sign Up"}
             <p className="text-16 font-normal text-gray-600">
               {user
-                ? "Link your acount to get started"
+                ? "Link your account to get started"
                 : "Please enter your details"}
             </p>
           </h1>
         </div>
       </header>
       {user ? (
-        <div className="flex flex-col gap-4">{/* plaidlink */}</div>
+        <div className="flex flex-col gap-4">
+          {/* <PlaidLink user={user} variant="primary" /> */}
+        </div>
       ) : (
         <>
           <Form {...form}>
@@ -152,24 +173,27 @@ const AuthForm = ({ type }: { type: string }) => {
                   </div>
                 </>
               )}
+
               <CustomInput
                 control={form.control}
                 name="email"
                 label="Email"
-                placeholder="Enter your email."
+                placeholder="Enter your email"
               />
+
               <CustomInput
                 control={form.control}
                 name="password"
                 label="Password"
-                placeholder="Enter your password."
+                placeholder="Enter your password"
               />
+
               <div className="flex flex-col gap-4">
-                <Button type="submit" className="form-btn" disabled={isLoading}>
+                <Button type="submit" disabled={isLoading} className="form-btn">
                   {isLoading ? (
                     <>
-                      <Loader2 className="animate-spin" />
-                      &nbsp; Loading...
+                      <Loader2 size={20} className="animate-spin" /> &nbsp;
+                      Loading...
                     </>
                   ) : type === "sign-in" ? (
                     "Sign In"
@@ -179,20 +203,21 @@ const AuthForm = ({ type }: { type: string }) => {
                 </Button>
               </div>
             </form>
-            <footer className="flex justify-center gap-1">
-              <p className="text-14 font-normal text-gray-600">
-                {type === "sign-in"
-                  ? "Don't have an account?"
-                  : "Already have an account?"}
-              </p>
-              <Link
-                href={type === "sign-in" ? "/sign-up" : "sign-in"}
-                className="form-link"
-              >
-                {type === "sign-in" ? "Sign Up" : "Sign In"}
-              </Link>
-            </footer>
           </Form>
+
+          <footer className="flex justify-center gap-1">
+            <p className="text-14 font-normal text-gray-600">
+              {type === "sign-in"
+                ? "Don't have an account?"
+                : "Already have an account?"}
+            </p>
+            <Link
+              href={type === "sign-in" ? "/sign-up" : "/sign-in"}
+              className="form-link"
+            >
+              {type === "sign-in" ? "Sign up" : "Sign in"}
+            </Link>
+          </footer>
         </>
       )}
     </section>

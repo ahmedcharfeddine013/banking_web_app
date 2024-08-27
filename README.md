@@ -1,6 +1,21 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+## Introducation
+
+Built with Next.js, Horizon is a financial SaaS platform that connects to multiple bank accounts, displays transactions in real-time, allows users to transfer money to other platform users, and manages their finances altogether.
+
+## Teck Stack
+
+Next.js
+TypeScript
+Appwrite
+Plaid
+Dwolla
+React Hook Form
+Zod
+TailwindCSS
+Chart.js
+ShadCN
 
 First, run the development server:
 
